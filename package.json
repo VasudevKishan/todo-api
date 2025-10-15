@@ -1,0 +1,17 @@
+{
+  "name": "todo-backend",
+  "version": "1.0.0",
+  "description": "Backend application for todo",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node --watch server",
+    "start": "node server"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0"
+  }
+}
