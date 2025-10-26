@@ -10,6 +10,8 @@ import { corsOptions } from './config/corsOptions.js';
 import { connectDB } from './config/dbConn.js';
 import mongoose from 'mongoose';
 import rootRouter from './routes/root.js';
+import usersRouter from './routes/userRoutes.js';
+
 const __dirname = import.meta.dirname;
 const app = express();
 const PORT: number = parseInt(process.env.PORT || '3500', 10);
@@ -30,6 +32,7 @@ app.use(cookieParser());
 app.use('/', express.static(path.join(__dirname, 'public')));
 
 app.use('/', rootRouter);
+app.use('/users', usersRouter);
 
 app.all(/.*/, (req: Request, res: Response) => {
   res.status(404);
