@@ -1,19 +1,21 @@
-require('dotenv').config();
-const express = require('express');
-const app = express();
-const path = require('path');
-const { logger } = require('./middleware/logger');
-const { errorHandler } = require('./middleware/errorHandler');
-const cookieParser = require('cookie-parser');
-const cors = require('cors');
-const corsOptions = require('./config/corsOptions');
-const connectDB = require('./config/dbConn');
-const mongoose = require('mongoose');
-const { logEvents } = require('./middleware/logger');
+import 'dotenv/config';
 
-const PORT = process.env.PORT || 3500;
+import express, { Request, Response } from 'express';
+import path from 'path';
+import { logger, logEvents } from './middleware/logger.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import { corsOptions } from './config/corsOptions.js';
+import { connectDB } from './config/dbConn.js';
+import mongoose from 'mongoose';
+import rootRouter from './routes/root.js';
+const __dirname = import.meta.dirname;
+const app = express();
+const PORT: number = parseInt(process.env.PORT || '3500', 10);
 
 console.log(process.env.NODE_ENV);
+console.log('Dirname - ' + __dirname);
 
 connectDB();
 
@@ -27,9 +29,9 @@ app.use(cookieParser());
 
 app.use('/', express.static(path.join(__dirname, 'public')));
 
-app.use('/', require('./routes/root'));
+app.use('/', rootRouter);
 
-app.all(/.*/, (req, res) => {
+app.all(/.*/, (req: Request, res: Response) => {
   res.status(404);
   if (req.accepts('html')) {
     res.sendFile(path.join(__dirname, 'views', '404.html'));
