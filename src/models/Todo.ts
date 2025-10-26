@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const todoSchema = new mongoose.Schema(
   {
@@ -38,4 +38,6 @@ const todoSchema = new mongoose.Schema(
 );
 todoSchema.index({ user: 1, project: 1, status: 1 });
 
-module.exports = mongoose.model('Todo', todoSchema);
+export type TodoType = mongoose.InferSchemaType<typeof todoSchema>;
+
+export default mongoose.model('Todo', todoSchema);
