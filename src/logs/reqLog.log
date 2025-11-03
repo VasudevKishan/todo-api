@@ -1,7 +1,0 @@
-20251103	08:53:45	117e7a6a-1275-4a92-a33e-d84e339e46fa	POST	/users	undefined
-20251103	08:53:48	75cca1e0-78b7-4d41-b018-c68e956bfbcf	GET	/users	undefined
-20251103	08:54:29	5e1ae74c-0c60-4dfd-989f-456d23af6b8f	GET	/users:id	undefined
-20251103	08:54:41	c545a328-43ac-4c7c-8c1d-0c6be9ef2659	POST	/users?sort	undefined
-20251103	08:54:49	2ea2d623-7102-49f4-b44d-0a045e3cd65b	GET	/users?sort	undefined
-20251103	08:54:57	40ceb8b0-20e9-4302-9b9f-56b887c41054	GET	/users?sort=true	undefined
-20251103	08:57:43	47df00f0-0c52-40a4-b489-2d47b281eebc	GET	/users	undefined
