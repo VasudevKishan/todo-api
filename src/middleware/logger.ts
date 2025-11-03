@@ -10,6 +10,8 @@ import { v4 as uuid } from 'uuid';
 import path from 'path';
 import { NextFunction, Request, Response } from 'express';
 
+const __dirname = import.meta.dirname;
+
 import fs from 'fs';
 
 const fsPromises = fs.promises;
