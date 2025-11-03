@@ -19,8 +19,12 @@ const userSchema = new mongoose.Schema({
   },
   roles: {
     type: [String],
+    enum: ['User', 'Admin'],
     default: ['User'],
   },
+});
+userSchema.virtual('isAdmin').get(function () {
+  return this.roles.includes('Admin');
 });
 
 export type UserType = mongoose.InferSchemaType<typeof userSchema>;
