@@ -1,8 +1,8 @@
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 
 const todoSchema = new mongoose.Schema(
   {
-    tile: {
+    title: {
       type: String,
       required: true,
     },
@@ -14,19 +14,20 @@ const todoSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    status: {
+    completed: {
       type: Boolean,
       default: false,
     },
-    dueDate: {
+    dueAt: {
       type: Date,
+      required: false,
     },
-    project: {
+    projectId: {
       type: mongoose.SchemaTypes.ObjectId,
       required: true,
       ref: 'Project',
     },
-    user: {
+    userId: {
       type: mongoose.SchemaTypes.ObjectId,
       required: true,
       ref: 'User',
@@ -38,6 +39,8 @@ const todoSchema = new mongoose.Schema(
 );
 todoSchema.index({ user: 1, project: 1, status: 1 });
 
-export type TodoType = mongoose.InferSchemaType<typeof todoSchema>;
+export type TodoType = mongoose.InferSchemaType<typeof todoSchema> & {
+  _id: Types.ObjectId;
+};
 
 export default mongoose.model('Todo', todoSchema);
