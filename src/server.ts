@@ -11,6 +11,8 @@ import { connectDB } from './config/dbConn.js';
 import mongoose from 'mongoose';
 import rootRouter from './routes/root.js';
 import usersRouter from './routes/userRoutes.js';
+import projectRouter from './routes/projectRoutes.js';
+import todosRouter from './routes/todosRouter.js';
 
 const __dirname = import.meta.dirname;
 const app = express();
@@ -33,6 +35,8 @@ app.use('/', express.static(path.join(__dirname, 'public')));
 
 app.use('/', rootRouter);
 app.use('/users', usersRouter);
+app.use('/myprojects', projectRouter);
+app.use('/mytodos', todosRouter);
 
 app.all(/.*/, (req: Request, res: Response) => {
   res.status(404);

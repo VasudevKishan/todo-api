@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -27,6 +27,8 @@ userSchema.virtual('isAdmin').get(function () {
   return this.roles.includes('Admin');
 });
 
-export type UserType = mongoose.InferSchemaType<typeof userSchema>;
+export type UserType = mongoose.InferSchemaType<typeof userSchema> & {
+  _id: Types.ObjectId;
+};
 
 export default mongoose.model('User', userSchema);
