@@ -1,40 +1,41 @@
-import { request, response, RequestHandler } from 'express';
+import { RequestHandler } from 'express';
 import User from '../models/User.js';
 import Project from '../models/Project.js';
 import Todo, { TodoType } from '../models/Todo.js';
+import {
+  createNewTodoReqType,
+  createNewTodoResType,
+  deleteTodoReqType,
+  deleteTodoResType,
+  getMyTodosResBody,
+  UpdateTodoReqType,
+  UpdateTodoResType,
+} from '../types/todoTypes.js';
 
-interface getMyTodosReqBody {
-  userId: string;
-}
-interface getMyProjectsResBody {
-  todos: TodoType[];
-}
-type FilterBy = 'project' | 'starred';
-// const allowedFilters = ['starred', 'project'];
-interface getMyProjectsQueryParams {
-  filterBy: FilterBy;
-  value: string;
-}
 // @desc Get all my todos
 // @desc GET /mytodos
 // access Private
 const getMyTodos: RequestHandler<
-  Record<string, never>, // no params
-  getMyProjectsResBody | { message: string }, // response body
-  getMyTodosReqBody, // no request body
-  getMyProjectsQueryParams // no query params
+  Record<string, never>,
+  getMyTodosResBody | { message: string }
 > = async (req, res) => {
-  const { userId } = req.body;
-  const { filterBy, value } = req.query;
+  const userId = req.userId;
 
   if (!userId)
-    return res.status(400).json({ message: 'All fields are required' });
+    return res.status(403).json({ message: 'Forbidden! please login!' });
+
   const user = await User.findById(userId);
   if (!user) {
     return res.status(404).json({ message: 'User not found' });
   }
 
   let query = Todo.find().where('userId').equals(userId);
+
+  const filterBy =
+    typeof req.query.filterBy === 'string' ? req.query.filterBy : undefined;
+
+  const value =
+    typeof req.query.value === 'string' ? req.query.value : undefined;
 
   if (filterBy && value) {
     switch (filterBy) {
@@ -62,15 +63,6 @@ const getMyTodos: RequestHandler<
 
 // -----------------------------------------------------------------------------
 
-type createNewTodoResType = { message: string };
-interface createNewTodoReqType {
-  title: string;
-  description: string;
-  starred: boolean;
-  dueAt?: string;
-  userId: string;
-  projectId: string;
-}
 // @desc Create new Todo
 // @desc POST /mytodos
 // access Private
@@ -80,9 +72,9 @@ const createNewTodo: RequestHandler<
   createNewTodoReqType,
   Record<string, never>
 > = async (req, res) => {
-  const { userId, projectId, title, description, starred, dueAt } = req.body;
+  const { projectId, title, description, starred, dueAt } = req.body;
   // console.log(req.body);
-
+  const userId = req.userId;
   if (
     !userId ||
     !projectId ||
@@ -139,21 +131,6 @@ const createNewTodo: RequestHandler<
 
 // -----------------------------------------------------------------------------
 
-interface UpdateTodoReqType {
-  todoId: string;
-  title?: string;
-  description?: string;
-  starred?: boolean;
-  dueAt?: string;
-  // userId?: string;
-  projectId?: string;
-  completed?: boolean;
-}
-
-type UpdateTodoResType = { message: string };
-// interface UpdateTodoReqParams {
-//   todoId: string;
-// }
 // @desc update Todo
 // @desc patch /mytodos
 // access Private
@@ -173,6 +150,11 @@ const updateTodo: RequestHandler<
 
   const todo = await Todo.findById(todoId);
   if (!todo) return res.status(404).json({ message: 'Todo not found' });
+  const userId = req.userId;
+  if (todo.userId.toString() !== userId)
+    return res
+      .status(403)
+      .json({ message: "Todo doesn't belong to the current user" });
 
   if (title !== undefined) todo.title = title;
   if (description !== undefined) todo.description = description;
@@ -202,12 +184,6 @@ const updateTodo: RequestHandler<
 
 // -----------------------------------------------------------------------------
 
-type deleteTodoResType = { message: string };
-
-interface deleteTodoReqType {
-  todoId: string;
-}
-
 // @desc Delete Todo
 // @desc DELETE /mytodos
 // access Private
@@ -226,6 +202,12 @@ const deleteTodo: RequestHandler<
     return res
       .status(404)
       .json({ message: `Todo with ID ${todoId} not found` });
+
+  const userId = req.userId;
+  if (todo.userId.toString() !== userId)
+    return res
+      .status(403)
+      .json({ message: "Todo doesn't belong to the current user" });
 
   const deletedTodo = await Todo.findByIdAndDelete(todoId);
 

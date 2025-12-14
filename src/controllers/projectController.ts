@@ -1,27 +1,30 @@
-import { request, response, RequestHandler } from 'express';
+import { RequestHandler } from 'express';
 import Project, { ProjectType } from '../models/Project.js';
 import User from '../models/User.js';
 import Todo from '../models/Todo.js';
+import {
+  getMyProjectsRes,
+  createNewProjectReqBody,
+  createNewProjectRes,
+  deleteMyProjectReqBody,
+  deleteMyProjectRes,
+  updateMyProjectReqBody,
+  updateMyProjectRes,
+} from '../types/projectTypes.js';
 
-interface getMyProjectsResBody {
-  projects: ProjectType[];
-}
-type getMyProjectsRes = getMyProjectsResBody | { message: string };
-interface getMyProjectsReqBody {
-  userId: string;
-}
 // @desc Get projects of a user
 // @desc GET /myprojects
 // access Private
 const getMyProjects: RequestHandler<
   Record<string, never>,
   getMyProjectsRes,
-  getMyProjectsReqBody,
+  Record<string, never>,
   Record<string, never>
 > = async (req, res) => {
-  const { userId } = req.body;
+  const userId = req.userId;
+
   if (!userId)
-    return res.status(400).json({ message: 'All fields are required' });
+    return res.status(403).json({ message: 'Forbidden! please login!' });
 
   // TODO: check if user exists
 
@@ -51,11 +54,6 @@ const getMyProjects: RequestHandler<
 
 // -----------------------------------------------------------------------------
 
-type createNewProjectRes = { message: string };
-interface createNewProjectReqBody {
-  projectName: string;
-  userId: string;
-}
 // @desc create new project for a user
 // @desc POST /myprojects
 // access Private
@@ -65,7 +63,11 @@ const createNewProject: RequestHandler<
   createNewProjectReqBody,
   Record<string, never>
 > = async (req, res) => {
-  const { projectName, userId } = req.body;
+  const { projectName } = req.body;
+  const userId = req.userId;
+
+  if (!userId)
+    return res.status(403).json({ message: 'Forbidden! please login!' });
 
   if (!projectName || !userId)
     return res.status(400).json({ message: 'All fields are required!' });
@@ -97,12 +99,6 @@ const createNewProject: RequestHandler<
 
 // -----------------------------------------------------------------------------
 
-type updateMyProjectRes = { message: string };
-interface updateMyProjectReqBody {
-  projectId: string;
-  projectName: string;
-  userId: string;
-}
 // @desc Update project name for a user
 // @desc PATCH /myprojects
 // access Private
@@ -112,7 +108,11 @@ const updateMyProject: RequestHandler<
   updateMyProjectReqBody,
   Record<string, never>
 > = async (req, res) => {
-  const { projectId, projectName, userId } = req.body;
+  const { projectId, projectName } = req.body;
+  const userId = req.userId;
+  if (!userId)
+    return res.status(403).json({ message: 'Forbidden! please login!' });
+
   if (!projectId || !projectName || !userId)
     return res.status(400).json({ message: 'All fields are required!' });
 
@@ -142,12 +142,6 @@ const updateMyProject: RequestHandler<
 };
 
 // -----------------------------------------------------------------------------
-
-type deleteMyProjectRes = { message: string };
-
-interface deleteMyProjectReqBody {
-  projectId: string;
-}
 
 // @desc Delete project for a user
 // @desc DELETE /myprojects
