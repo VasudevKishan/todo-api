@@ -113,12 +113,15 @@ const updateMyProject: RequestHandler<
   if (!userId)
     return res.status(403).json({ message: 'Forbidden! please login!' });
 
-  if (!projectId || !projectName || !userId)
+  if (!projectId || !projectName)
     return res.status(400).json({ message: 'All fields are required!' });
 
   const project = await Project.findById(projectId).exec();
 
   if (!project) return res.status(400).json({ message: 'Project not found!' });
+
+  if (project.userId.toString() !== userId)
+    return res.status(403).json({ message: 'Unauthorized! Not your Todo' });
 
   const duplicate = await Project.findOne({ projectName })
     .where('userId')
@@ -153,11 +156,15 @@ const deleteMyProject: RequestHandler<
   Record<string, never>
 > = async (req, res) => {
   const { projectId } = req.body;
-
+  const userId = req.userId;
   if (!projectId)
     return res.status(400).json({ message: 'All fields are required!' });
 
-  // TODO: add check for todo if exists
+  const project = await Project.findById(projectId).exec();
+  if (!project) return res.status(400).json({ message: 'Project not found!' });
+  if (project.userId.toString() !== userId)
+    return res.status(403).json({ message: 'Unauthorized! Not your Project' });
+
   const foundTodos = await Todo.find()
     .where('projectId')
     .equals(projectId)
