@@ -2,12 +2,16 @@ import { Request, Response, RequestHandler } from 'express';
 import User, { UserType } from '../models/User.js';
 import bcrypt from 'bcrypt';
 import Project from '../models/Project.js';
+import {
+  createNewUserReqBody,
+  createNewUserResBody,
+  DeleteUserReqBody,
+  DeleteUserResBody,
+  getAllUsersResponse,
+  UpdateUserReqBody,
+  UpdateUserResBody,
+} from '../types/userTypes.js';
 
-interface getAllUsersResBody {
-  users: UserType[];
-}
-
-type getAllUsersResponse = getAllUsersResBody | { message: string };
 // @desc Get all users
 // @desc GET /users
 // access Private
@@ -16,7 +20,7 @@ const getAllUsers: RequestHandler<
   getAllUsersResponse, // response body
   Record<string, never>, // no request body
   Record<string, never> // no query params
-> = async (req, res) => {
+> = async (req: Request, res: Response) => {
   const users = await User.find().select('-password').lean();
   if (!users?.length) {
     return res.status(400).json({ message: 'No Users found!' }); // Empty Users DB
@@ -33,12 +37,8 @@ const getAllUsers: RequestHandler<
   res.json({ users: users });
 };
 
-interface createNewUserReqBody {
-  username: string;
-  email: string;
-  password: string;
-}
-type createNewUserResBody = { message: string };
+// -----------------------------------------------------------------------------
+
 // @desc Create new user
 // @desc POST /users
 // access Private
@@ -46,7 +46,7 @@ const createNewUser: RequestHandler<
   Record<string, never>, // no params
   createNewUserResBody, // response body
   createNewUserReqBody // request body
-> = async (req, res) => {
+> = async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
 
   // data check
@@ -90,15 +90,7 @@ const createNewUser: RequestHandler<
   else res.status(400).json({ message: 'Invalid user data received.' });
 };
 
-interface UpdateUserReqBody {
-  id: string;
-  username: string;
-  email: string;
-  password?: string;
-  roles: string;
-}
-
-type UpdateUserResBody = { message: string };
+// -----------------------------------------------------------------------------
 
 // @desc update user
 // @desc PATCH /users
@@ -108,7 +100,7 @@ const updateUser: RequestHandler<
   UpdateUserResBody,
   UpdateUserReqBody,
   Record<string, never>
-> = async (req, res) => {
+> = async (req: Request, res: Response) => {
   const { id, username, email, password, roles } = req.body;
 
   // check data
@@ -201,11 +193,7 @@ const updateUser: RequestHandler<
   res.json({ message: `${updatedUser.username} is updated!` });
 };
 
-interface DeleteUserReqBody {
-  userId: string;
-}
-
-type DeleteUserResBody = { message: string };
+// -----------------------------------------------------------------------------
 
 // @desc delete user
 // @desc DELETE /users
@@ -215,7 +203,7 @@ const deleteUser: RequestHandler<
   DeleteUserResBody,
   DeleteUserReqBody,
   Record<string, never>
-> = async (req, res) => {
+> = async (req: Request, res: Response) => {
   const { userId } = req.body;
   // check if id is passed in response
   if (!userId) {

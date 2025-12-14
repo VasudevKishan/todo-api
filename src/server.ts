@@ -10,6 +10,7 @@ import { corsOptions } from './config/corsOptions.js';
 import { connectDB } from './config/dbConn.js';
 import mongoose from 'mongoose';
 import rootRouter from './routes/root.js';
+import authRouter from './routes/authRoutes.js';
 import usersRouter from './routes/userRoutes.js';
 import projectRouter from './routes/projectRoutes.js';
 import todosRouter from './routes/todosRouter.js';
@@ -34,6 +35,7 @@ app.use(cookieParser());
 app.use('/', express.static(path.join(__dirname, 'public')));
 
 app.use('/', rootRouter);
+app.use('/auth', authRouter);
 app.use('/users', usersRouter);
 app.use('/myprojects', projectRouter);
 app.use('/mytodos', todosRouter);

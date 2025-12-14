@@ -5,9 +5,10 @@ import {
   getMyTodos,
   updateTodo,
 } from '../controllers/todoController.js';
+import { verifyJWT } from '../middleware/verifyJWT.js';
 const __dirname = import.meta.dirname;
 const router = express.Router();
-
+router.use(verifyJWT);
 router
   .route('/')
   .get(getMyTodos)
