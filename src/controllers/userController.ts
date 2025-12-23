@@ -8,6 +8,7 @@ import {
   DeleteUserReqBody,
   DeleteUserResBody,
   getAllUsersResponse,
+  UpdateUserParams,
   UpdateUserReqBody,
   UpdateUserResBody,
 } from '../types/userTypes.js';
@@ -20,7 +21,7 @@ const getAllUsers: RequestHandler<
   getAllUsersResponse, // response body
   Record<string, never>, // no request body
   Record<string, never> // no query params
-> = async (req: Request, res: Response) => {
+> = async (req, res) => {
   const users = await User.find().select('-password').lean();
   if (!users?.length) {
     return res.status(400).json({ message: 'No Users found!' }); // Empty Users DB
@@ -46,7 +47,7 @@ const createNewUser: RequestHandler<
   Record<string, never>, // no params
   createNewUserResBody, // response body
   createNewUserReqBody // request body
-> = async (req: Request, res: Response) => {
+> = async (req, res) => {
   const { username, email, password } = req.body;
 
   // data check
@@ -92,6 +93,8 @@ const createNewUser: RequestHandler<
 
 // -----------------------------------------------------------------------------
 
+// TODO: check logic for admit to update user details
+
 // @desc update user
 // @desc PATCH /users
 // access Private
@@ -100,8 +103,9 @@ const updateUser: RequestHandler<
   UpdateUserResBody,
   UpdateUserReqBody,
   Record<string, never>
-> = async (req: Request, res: Response) => {
-  const { id, username, email, password, roles } = req.body;
+> = async (req, res) => {
+  const id = req.userId;
+  const { username, email, password, roles } = req.body;
 
   // check data
   if (!id || !username || !email || !Array.isArray(roles) || !roles.length) {
@@ -113,33 +117,6 @@ const updateUser: RequestHandler<
   if (!user) {
     return res.status(400).json({ message: 'User not found!' });
   }
-
-  // check if the new data is duplicate
-  // const duplicateUser = await User.findOne({
-  //   $or: [{ email }, { username }],
-  // })
-  //   .collation({ locale: 'en', strength: 2 })
-  //   .lean()
-  //   .exec();
-
-  // console.log(duplicateUser);
-  // if (duplicateUser) {
-  //   // if we have a user that is not our user and has same email/username then its a duplicate
-  //   const isEmailDuplicate =
-  //     duplicateUser.email.toLowerCase() === email.toLowerCase() &&
-  //     duplicateUser._id.toString() !== id;
-  //   const isUsernameDuplicate =
-  //     duplicateUser.username.toLowerCase() === username.toLowerCase() &&
-  //     duplicateUser._id.toString() !== id;
-
-  //   if (isEmailDuplicate) {
-  //     return res.status(409).json({ message: 'Email already exists!' });
-  //   }
-
-  //   if (isUsernameDuplicate) {
-  //     return res.status(409).json({ message: 'Username already exists!' });
-  //   }
-  // }
 
   // Duplicate username
   const duplicateUsername = await User.findOne({
@@ -203,7 +180,7 @@ const deleteUser: RequestHandler<
   DeleteUserResBody,
   DeleteUserReqBody,
   Record<string, never>
-> = async (req: Request, res: Response) => {
+> = async (req, res) => {
   const { userId } = req.body;
   // check if id is passed in response
   if (!userId) {
@@ -239,3 +216,31 @@ const deleteUser: RequestHandler<
 };
 
 export { createNewUser, getAllUsers, deleteUser, updateUser };
+
+// ---- supposed to go in updateUser
+// check if the new data is duplicate
+// const duplicateUser = await User.findOne({
+//   $or: [{ email }, { username }],
+// })
+//   .collation({ locale: 'en', strength: 2 })
+//   .lean()
+//   .exec();
+
+// console.log(duplicateUser);
+// if (duplicateUser) {
+//   // if we have a user that is not our user and has same email/username then its a duplicate
+//   const isEmailDuplicate =
+//     duplicateUser.email.toLowerCase() === email.toLowerCase() &&
+//     duplicateUser._id.toString() !== id;
+//   const isUsernameDuplicate =
+//     duplicateUser.username.toLowerCase() === username.toLowerCase() &&
+//     duplicateUser._id.toString() !== id;
+
+//   if (isEmailDuplicate) {
+//     return res.status(409).json({ message: 'Email already exists!' });
+//   }
+
+//   if (isUsernameDuplicate) {
+//     return res.status(409).json({ message: 'Username already exists!' });
+//   }
+// }

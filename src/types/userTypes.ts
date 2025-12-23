@@ -16,6 +16,9 @@ export type createNewUserResBody = { message: string };
 
 // -----------------------------------------------------------------------------
 
+export type UpdateUserParams = {
+  userId: string;
+};
 export interface UpdateUserReqBody {
   id: string;
   username: string;
@@ -25,8 +28,6 @@ export interface UpdateUserReqBody {
 }
 
 export type UpdateUserResBody = { message: string };
-
-
 
 // -----------------------------------------------------------------------------
 
