@@ -9,11 +9,7 @@ import { verifyJWT } from '../middleware/verifyJWT.js';
 const __dirname = import.meta.dirname;
 const router = express.Router();
 router.use(verifyJWT);
-router
-  .route('/')
-  .get(getMyTodos)
-  .post(createNewTodo)
-  .patch(updateTodo)
-  .delete(deleteTodo);
+router.route('/').get(getMyTodos).post(createNewTodo);
+router.route('/:todoId').patch(updateTodo).delete(deleteTodo);
 
 export default router;

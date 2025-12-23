@@ -5,9 +5,10 @@ import Todo, { TodoType } from '../models/Todo.js';
 import {
   createNewTodoReqType,
   createNewTodoResType,
-  deleteTodoReqType,
+  deleteTodoParams,
   deleteTodoResType,
   getMyTodosResBody,
+  updateTodoParams,
   UpdateTodoReqType,
   UpdateTodoResType,
 } from '../types/todoTypes.js';
@@ -15,6 +16,7 @@ import {
 // @desc Get all my todos
 // @desc GET /mytodos
 // access Private
+// here we have option to add query params for filtering - filter by project Id or filter by starred value is true
 const getMyTodos: RequestHandler<
   Record<string, never>,
   getMyTodosResBody | { message: string }
@@ -135,15 +137,15 @@ const createNewTodo: RequestHandler<
 // @desc patch /mytodos
 // access Private
 const updateTodo: RequestHandler<
-  Record<string, never>,
+  updateTodoParams,
   UpdateTodoResType,
   UpdateTodoReqType,
   Record<string, never>
 > = async (req, res) => {
   // const { todoId } = req.params;
   // console.log('todo id:' + todoId);
-  const { todoId, title, description, starred, dueAt, projectId, completed } =
-    req.body;
+  const { todoId } = req.params;
+  const { title, description, starred, dueAt, projectId, completed } = req.body;
 
   if (!todoId)
     return res.status(400).json({ message: 'Todo Id required to update!' });
@@ -188,12 +190,12 @@ const updateTodo: RequestHandler<
 // @desc DELETE /mytodos
 // access Private
 const deleteTodo: RequestHandler<
-  Record<string, never>,
+  deleteTodoParams,
   deleteTodoResType,
-  deleteTodoReqType,
+  Record<string, never>,
   Record<string, never>
 > = async (req, res) => {
-  const { todoId } = req.body;
+  const { todoId } = req.params;
   if (!todoId) return res.status(400).json({ message: 'Todo ID required' });
 
   const todo = await Todo.findById(todoId).exec();

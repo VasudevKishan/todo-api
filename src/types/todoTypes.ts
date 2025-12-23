@@ -17,8 +17,8 @@ export interface createNewTodoReqType {
 
 // -----------------------------------------------------------------------------
 
+export type updateTodoParams = { todoId: string };
 export interface UpdateTodoReqType {
-  todoId: string;
   title?: string;
   description?: string;
   starred?: boolean;
@@ -33,6 +33,4 @@ export type UpdateTodoResType = { message: string };
 
 export type deleteTodoResType = { message: string };
 
-export interface deleteTodoReqType {
-  todoId: string;
-}
+export type deleteTodoParams = { todoId: string };
