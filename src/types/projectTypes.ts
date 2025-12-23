@@ -17,7 +17,6 @@ export interface createNewProjectReqBody {
 export type updateMyProjectParams = { projectId: string };
 export type updateMyProjectRes = { message: string };
 export interface updateMyProjectReqBody {
-  projectId: string;
   projectName: string;
   userId: string;
 }
@@ -26,6 +25,3 @@ export interface updateMyProjectReqBody {
 
 export type deleteMyProjectRes = { message: string };
 export type deleteMyProjectParams = { projectId: string };
-export interface deleteMyProjectReqBody {
-  projectId: string;
-}
