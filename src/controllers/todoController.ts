@@ -8,6 +8,8 @@ import {
   deleteTodoParams,
   deleteTodoResType,
   getMyTodosResBody,
+  getTodoByIdParams,
+  getTodoByIdResBody,
   updateTodoParams,
   UpdateTodoReqType,
   UpdateTodoResType,
@@ -61,6 +63,27 @@ const getMyTodos: RequestHandler<
     return res.status(400).json({ message: 'No todos found!' });
 
   return res.json({ todos: todos });
+};
+
+// @desc Get all my todos
+// @desc GET /mytodos/:id
+// access Private
+
+const getTodoById: RequestHandler<
+  getTodoByIdParams,
+  getTodoByIdResBody | { message: string }
+> = async (req, res) => {
+  const userId = req.userId;
+  const { todoId } = req.params;
+
+  if (!userId)
+    return res.status(403).json({ message: 'Forbidden! please login!' });
+
+  const todo = await Todo.findById(todoId).lean().exec();
+
+  if (!todo) return res.status(400).json({ message: 'Invalid todoId' });
+
+  return res.json({ todo });
 };
 
 // -----------------------------------------------------------------------------
@@ -221,4 +244,4 @@ const deleteTodo: RequestHandler<
   });
 };
 
-export { getMyTodos, createNewTodo, updateTodo, deleteTodo };
+export { getMyTodos, createNewTodo, getTodoById, updateTodo, deleteTodo };
