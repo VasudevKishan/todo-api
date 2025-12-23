@@ -10,6 +10,8 @@ import {
   deleteMyProjectRes,
   updateMyProjectReqBody,
   updateMyProjectRes,
+  updateMyProjectParams,
+  deleteMyProjectParams,
 } from '../types/projectTypes.js';
 
 // @desc Get projects of a user
@@ -103,12 +105,13 @@ const createNewProject: RequestHandler<
 // @desc PATCH /myprojects
 // access Private
 const updateMyProject: RequestHandler<
-  Record<string, never>,
+  updateMyProjectParams,
   updateMyProjectRes,
   updateMyProjectReqBody,
   Record<string, never>
 > = async (req, res) => {
-  const { projectId, projectName } = req.body;
+  const { projectName } = req.body;
+  const { projectId } = req.params;
   const userId = req.userId;
   if (!userId)
     return res.status(403).json({ message: 'Forbidden! please login!' });
@@ -150,12 +153,12 @@ const updateMyProject: RequestHandler<
 // @desc DELETE /myprojects
 // access Private
 const deleteMyProject: RequestHandler<
-  Record<string, never>,
+  deleteMyProjectParams,
   deleteMyProjectRes,
   deleteMyProjectReqBody,
   Record<string, never>
 > = async (req, res) => {
-  const { projectId } = req.body;
+  const { projectId } = req.params;
   const userId = req.userId;
   if (!projectId)
     return res.status(400).json({ message: 'All fields are required!' });
