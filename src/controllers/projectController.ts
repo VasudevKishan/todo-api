@@ -6,7 +6,6 @@ import {
   getMyProjectsRes,
   createNewProjectReqBody,
   createNewProjectRes,
-  deleteMyProjectReqBody,
   deleteMyProjectRes,
   updateMyProjectReqBody,
   updateMyProjectRes,
@@ -155,7 +154,7 @@ const updateMyProject: RequestHandler<
 const deleteMyProject: RequestHandler<
   deleteMyProjectParams,
   deleteMyProjectRes,
-  deleteMyProjectReqBody,
+  Record<string, never>,
   Record<string, never>
 > = async (req, res) => {
   const { projectId } = req.params;
