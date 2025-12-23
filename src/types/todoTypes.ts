@@ -4,6 +4,10 @@ export interface getMyTodosResBody {
   todos: TodoType[];
 }
 
+export interface getTodoByIdResBody {
+  todo: TodoType;
+}
+export type getTodoByIdParams = { todoId: string };
 // -----------------------------------------------------------------------------
 
 export type createNewTodoResType = { message: string };
