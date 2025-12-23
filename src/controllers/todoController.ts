@@ -171,15 +171,13 @@ const updateTodo: RequestHandler<
   const { title, description, starred, dueAt, projectId, completed } = req.body;
 
   if (!todoId)
-    return res.status(400).json({ message: 'Todo Id required to update!' });
+    return res.status(400).json({ message: 'Todo Id is required to update!' });
 
   const todo = await Todo.findById(todoId);
   if (!todo) return res.status(404).json({ message: 'Todo not found' });
   const userId = req.userId;
   if (todo.userId.toString() !== userId)
-    return res
-      .status(403)
-      .json({ message: "Todo doesn't belong to the current user" });
+    return res.status(403).json({ message: 'Not your Todo!!!' });
 
   if (title !== undefined) todo.title = title;
   if (description !== undefined) todo.description = description;
