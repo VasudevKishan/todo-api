@@ -19,8 +19,8 @@ const __dirname = import.meta.dirname;
 const app = express();
 const PORT: number = parseInt(process.env.PORT || '3500', 10);
 
-console.log(process.env.NODE_ENV);
-console.log('Dirname - ' + __dirname);
+// console.log(process.env.NODE_ENV);
+// console.log('Dirname - ' + __dirname);
 
 connectDB();
 
