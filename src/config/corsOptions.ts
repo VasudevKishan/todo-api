@@ -5,7 +5,10 @@ export const corsOptions = {
     origin: string | undefined,
     callback: (err: Error | null, allow?: boolean | undefined) => void
   ) => {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+    // for postman ->
+    // if (!origin || allowedOrigins.indexOf(origin) !== -1)
+
+    if (origin && allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
