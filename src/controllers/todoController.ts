@@ -48,7 +48,10 @@ const getMyTodos: RequestHandler<
         break;
       case 'starred':
         if (value !== 'true' && value !== 'false') {
-          return res.status(400).json({ message: 'Invalid query params' });
+          return res.status(400).json({
+            message:
+              'Invalid query params, starred can have only true or false',
+          });
         }
         query = query.where('starred').equals(value === 'true');
         break;

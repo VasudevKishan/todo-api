@@ -126,7 +126,7 @@ const updateUser: RequestHandler<
     .lean()
     .exec();
 
-  console.log(duplicateUsername);
+  // console.log(duplicateUsername);
   if (duplicateUsername) {
     // if we have a user that is not our user and has same email/username then its a duplicate
     const isUsernameDuplicate =
@@ -146,7 +146,7 @@ const updateUser: RequestHandler<
     .lean()
     .exec();
 
-  console.log(duplicateEmail);
+  // console.log(duplicateEmail);
   if (duplicateEmail) {
     // if we have a user that is not our user and has same email/username then its a duplicate
     const isEmailDuplicate =

@@ -135,4 +135,56 @@ const logout: RequestHandler<
   res.json({ message: 'Cookie cleared' });
 };
 
-export { login, refresh, logout };
+// -----------------------------------------------------------------------------
+
+// @desc who am I
+// @desc GET /auth/me
+// access private
+
+interface whoAmIResType {
+  id: string;
+  username: string;
+  roles: string[];
+  email: string;
+}
+const whoAmI: RequestHandler<
+  Record<string, never>,
+  whoAmIResType | { message: string },
+  Record<string, never>,
+  Record<string, never>
+> = async (req, res) => {
+  const cookies = req.cookies;
+  if (!cookies) return res.status(401).json({ message: 'Unauthorized' });
+
+  const refreshToken = cookies.jwt;
+
+  jwt.verify(
+    refreshToken,
+    REFRESH_TOKEN_SECRET,
+    async (
+      err: jwt.VerifyErrors | null,
+      decoded: string | jwt.JwtPayload | undefined
+    ) => {
+      if (err) return res.status(403).json({ message: 'Forbidden' });
+
+      if (!decoded || typeof decoded === 'string') {
+        return res.status(403).json({ message: 'Invalid token payload' });
+      }
+
+      const payload = decoded as AccessTokenPayload;
+
+      const foundUser = await User.findById(payload.userInfo.userId).exec();
+      if (!foundUser) return res.status(401).json({ message: 'Unauthorized' });
+      const me: whoAmIResType = {
+        id: foundUser._id.toString(),
+        username: foundUser.username,
+        email: foundUser.email,
+        roles: foundUser.roles,
+      };
+
+      res.json(me);
+    }
+  );
+};
+
+export { login, refresh, logout, whoAmI };
