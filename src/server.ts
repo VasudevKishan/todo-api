@@ -31,8 +31,9 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use(cookieParser());
-
-app.use('/', express.static(path.join(__dirname, 'public')));
+const ROOT = process.cwd();
+// app.use('/', express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(ROOT, 'public')));
 
 app.use('/', rootRouter);
 app.use('/auth', authRouter);
@@ -43,7 +44,7 @@ app.use('/mytodos', todosRouter);
 app.all(/.*/, (req: Request, res: Response) => {
   res.status(404);
   if (req.accepts('html')) {
-    res.sendFile(path.join(__dirname, 'views', '404.html'));
+    res.sendFile(path.join(ROOT, 'views', '404.html'));
   } else if (req.accepts('json')) {
     res.json({ message: '404 Not Found' });
   } else {
