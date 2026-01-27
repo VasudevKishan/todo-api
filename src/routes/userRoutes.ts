@@ -6,6 +6,7 @@ import {
   deleteUser,
 } from '../controllers/userController.js';
 import { verifyJWT } from '../middleware/verifyJWT.js';
+import loginLimiter from '../middleware/loginLimitter.js';
 
 const __dirname = import.meta.dirname;
 const router = express.Router();
@@ -13,7 +14,7 @@ const router = express.Router();
 router
   .route('/')
   .get(verifyJWT, getAllUsers)
-  .post(createNewUser)
+  .post(loginLimiter, createNewUser)
   .patch(verifyJWT, updateUser)
   .delete(verifyJWT, deleteUser);
 
